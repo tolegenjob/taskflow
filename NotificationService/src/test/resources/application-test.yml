@@ -1,0 +1,44 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:notificationdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+    show-sql: true
+  h2:
+    console:
+      enabled: true
+  liquibase:
+    enabled: false
+
+rabbitmq:
+  queue:
+    notifications:
+      general: task.notifications
+      topic: task.notifications.topic
+      headers: task.notifications.headers
+    audit:
+      fanout: task.audit.fanout
+    error:
+      topic: task.error.topic
+    dlx:
+      notifications: task.dlx.notifications
+
+  exchange:
+    direct: taskflow.direct.exchange
+    fanout: taskflow.fanout.exchange
+    topic: taskflow.topic.exchange
+    headers: taskflow.headers.exchange
+    dlx: taskflow.dlx.exchange
+
+  routing-key:
+    direct: task.create.*
+    topic:
+      general: task.delete.*
+      error: task.error.#

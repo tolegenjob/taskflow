@@ -1,0 +1,16 @@
+services:
+  notification-postgres:
+    image: postgres
+    container_name: notifications-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: tqal
+      POSTGRES_PASSWORD: Qwerty5656@
+      POSTGRES_DB: notifications_postgres_db
+    ports:
+      - "5434:5432"
+    volumes:
+      - notifications-postgres-data:/var/lib/postgresql/data
+
+volumes:
+  notifications-postgres-data:

@@ -1,0 +1,105 @@
+spring:
+  application:
+    name: TaskFlow
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add-type-info: false
+    consumer:
+      logs-group-id: taskflow-log-consumer-group
+      events-group-id: taskflow-event-consumer-group
+      logs-container-factory: logsKafkaListenerContainerFactory
+      events-container-factory: eventsKafkaListenerContainerFactory
+    topic:
+      logs: taskflow.logs
+      events: taskflow.events
+      dlq: taskflow.dlq
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    listener:
+      simple:
+        retry:
+          enabled: true
+    retry:
+      backoff-period: 2000
+      max-attempts: 3
+
+    history:
+      exchange: task.history.exchange
+      queue: task.history.queue
+      routing-key: task.history
+
+    notifications:
+      exchange:
+        direct: taskflow.direct.exchange
+        fanout: taskflow.fanout.exchange
+        topic: taskflow.topic.exchange
+        headers: taskflow.headers.exchange
+        dlx: taskflow.dlx.exchange
+
+      queue:
+        general: task.notifications
+        topic: task.notifications.topic
+        headers: task.notifications.headers
+        audit:
+          fanout: task.audit.fanout
+        error:
+          topic: task.error.topic
+        dlx: task.dlx.notifications
+
+      routing-key:
+        create: task.create
+        error: task.error.#
+        delete: task.delete
+    ttl: 60000
+
+  data:
+    web:
+      pageable:
+        default-page-number: 0
+        default-page-size: 10
+        max-page-size: 100
+
+    mongodb:
+      uri: mongodb://tqal:Qwerty5656%40@localhost:27017/taskflow_mongo_db?authSource=admin
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/taskflow_postgres_db
+    username: tqal
+    password: Qwerty5656@
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+      fail-on-empty-beans: false
+
+server:
+  port: 8080
+
+file:
+  max-size: 10485760 # 10 * 1024 * 1024 (в байтах = 10MB)
+  allowed-types:
+    - application/pdf
+    - image/png
+    - image/jpeg

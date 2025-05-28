@@ -1,0 +1,30 @@
+services:
+  event-consumer-mongoDB:
+    image: mongo
+    container_name: event-consumer-mongoDB
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: tqal
+      MONGO_INITDB_ROOT_PASSWORD: Qwerty5656@
+      MONGO_INITDB_DATABASE: event_consumer_mongo_db
+    ports:
+      - "27018:27017"
+    volumes:
+      - event-consumer-mongo-data:/data/db
+
+  event-consumer-postgres:
+    image: postgres
+    container_name: event-consumer-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: tqal
+      POSTGRES_PASSWORD: Qwerty5656@
+      POSTGRES_DB: event_consumer_postgres_db
+    ports:
+      - "5435:5432"
+    volumes:
+      - event-consumer-postgres-data:/var/lib/postgresql/data
+
+volumes:
+  event-consumer-mongo-data:
+  event-consumer-postgres-data:

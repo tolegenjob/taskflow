@@ -1,0 +1,78 @@
+spring:
+  application:
+    name: EventConsumerService
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      enable-auto-commit: false
+      auto-offset-reset: earliest
+      dlq-group-id: dlq-event-consumer-group
+      events-group-id: event-consumer-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: '*'
+        spring.json.use.type.headers: false
+        spring.json.value.default.type: com.example.eventconsumerservice.DTO.Event.IncomeEvent
+    listener:
+      ack-mode: manual
+    topic:
+      logs: taskflow.logs
+      events: taskflow.events
+      dlq: taskflow.dlq
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    listener:
+      simple:
+        retry:
+          enabled: true
+    queue:
+      notifications: comment.notifications
+      dlx-notifications: comment.dlx.notifications
+      ttl: 60000
+
+    exchange:
+      direct: taskflow.direct.exchange
+      dlx: taskflow.dlx.exchange
+
+    routing-key:
+      direct: comment.notify.*
+
+    retry:
+      backoff-period: 2000
+      max-attempts: 3
+
+  data:
+    web:
+      pageable:
+        default-page-number: 0
+        default-page-size: 10
+        max-page-size: 100
+
+    mongodb:
+      uri: mongodb://tqal:Qwerty5656%40@localhost:27018/event_consumer_mongo_db?authSource=admin
+
+  datasource:
+    url: jdbc:postgresql://localhost:5435/event_consumer_postgres_db
+    username: tqal
+    password: Qwerty5656@
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+      fail-on-empty-beans: false
+
+server:
+  port: 8082

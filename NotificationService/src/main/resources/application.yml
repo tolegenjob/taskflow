@@ -1,0 +1,80 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: NotificationService
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    topic-logs: taskflow.logs
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    listener:
+      simple:
+        retry:
+          enabled: true
+    queue:
+      notifications:
+        general: task.notifications
+        topic: task.notifications.topic
+        headers: task.notifications.headers
+        comment: comment.notifications
+      audit:
+        fanout: task.audit.fanout
+      error:
+        topic: task.error.topic
+      dlx:
+        notifications: task.dlx.notifications
+        comment: comment.dlq.notifications
+      ttl: 60000
+
+    exchange:
+      direct: taskflow.direct.exchange
+      fanout: taskflow.fanout.exchange
+      topic: taskflow.topic.exchange
+      headers: taskflow.headers.exchange
+      dlx: taskflow.dlx.exchange
+
+    routing-key:
+      direct: task.create.*
+      comment: comment.notify.*
+      topic:
+        general: task.delete.*
+        error: task.error.#
+
+    retry:
+      backoff-period: 2000
+      max-attempts: 3
+
+  data:
+    web:
+      pageable:
+        default-page-number: 0
+        default-page-size: 10
+        max-page-size: 100
+
+  datasource:
+    url: jdbc:postgresql://localhost:5434/notifications_postgres_db
+    username: tqal
+    password: Qwerty5656@
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/master.yml
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+      fail-on-empty-beans: false
