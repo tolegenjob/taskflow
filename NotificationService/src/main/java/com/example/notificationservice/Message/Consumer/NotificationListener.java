@@ -98,13 +98,13 @@ public class NotificationListener{
     public void handleDlxNotification(@Payload NotificationEvent notificationEvent) {
         try {
             log.warn("Processing message from DLX: {}, {}, {}",
-                    notificationEvent.taskId(),
+                    notificationEvent.entityId(),
                     notificationEvent.status(),
                     notificationEvent.title());
             notificationService.createNotification(notificationEvent);
         } catch (Exception e) {
             log.error("Failed to process DLX notification event: {}, {}, {}",
-                    notificationEvent.taskId(),
+                    notificationEvent.entityId(),
                     notificationEvent.status(),
                     notificationEvent.title(),
                     e);
@@ -117,19 +117,19 @@ public class NotificationListener{
         try {
             log.info("Received {} notification event: {}, {}, {}",
                     type,
-                    notificationEvent.taskId(),
+                    notificationEvent.entityId(),
                     notificationEvent.status(),
                     notificationEvent.title());
             notificationService.createNotification(notificationEvent);
         } catch (Exception e) {
             log.error("Failed to process {} notification event: {}, {}, {}",
                     type,
-                    notificationEvent.taskId(),
+                    notificationEvent.entityId(),
                     notificationEvent.status(),
                     notificationEvent.title(), e);
             throw new AmqpRejectAndDontRequeueException("Failed to process %s notification %s %s %s"
                     .formatted(type,
-                            notificationEvent.taskId(),
+                            notificationEvent.entityId(),
                             notificationEvent.status(),
                             notificationEvent.title()),
                     e);

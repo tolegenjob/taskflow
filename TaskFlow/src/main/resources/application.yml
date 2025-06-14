@@ -2,6 +2,12 @@ spring:
   application:
     name: TaskFlow
 
+  elasticsearch:
+    uris: http://localhost:9200
+
+  cache:
+    type: redis
+
   kafka:
     bootstrap-servers: localhost:9092
     producer:
@@ -62,6 +68,18 @@ spring:
     ttl: 60000
 
   data:
+    elasticsearch:
+      repositories:
+        enabled: true
+
+    redis:
+      host: localhost
+      port: 6379
+      tasks-ttl: 1800000
+      projects-ttl: 3600000
+      users-ttl: 86400000
+      pattern-topic: taskflow-updates
+
     web:
       pageable:
         default-page-number: 0
@@ -91,8 +109,7 @@ spring:
 
   jackson:
     serialization:
-      write-dates-as-timestamps: false
-      fail-on-empty-beans: false
+      WRITE_DATES_AS_TIMESTAMPS: false
 
 server:
   port: 8080
@@ -103,3 +120,8 @@ file:
     - application/pdf
     - image/png
     - image/jpeg
+
+jwt:
+  secret: UBaQzVzUgSB+vVPSEIDGZBlMOBuKBteowUuDV5ZG4Kk=
+  access-expiration-ms: 900000
+  refresh-expiration-ms: 604800000

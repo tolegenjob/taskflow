@@ -19,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 import static com.example.TaskFlow.Util.EntityUtil.findOrThrow;
@@ -136,7 +137,8 @@ public class CommentService {
                 "content", comment.getContent(),
                 "taskId", comment.getTask().getId(),
                 "taskAuthorId", authorId,
-                "userId", comment.getUser().getId()
+                "userId", comment.getUser().getId(),
+                "createdAt", comment.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS"))
         );
     }
 

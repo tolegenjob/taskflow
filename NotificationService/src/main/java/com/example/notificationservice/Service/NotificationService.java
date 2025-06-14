@@ -19,11 +19,11 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
 
     public void createNotification(NotificationEvent notificationEvent) {
-        if (notificationEvent.taskId() == null) {
+        if (notificationEvent.entityId() == null) {
             throw new IllegalArgumentException("Task id is required");
         }
         Notification notification = new Notification();
-        notification.setTaskId(notificationEvent.taskId());
+        notification.setTaskId(notificationEvent.entityId());
         notification.setTitle(notificationEvent.title());
         notification.setStatus(notificationEvent.status());
         Notification saved  = notificationRepository.save(notification);

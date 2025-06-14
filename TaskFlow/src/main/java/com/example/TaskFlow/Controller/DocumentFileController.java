@@ -2,6 +2,7 @@ package com.example.TaskFlow.Controller;
 
 import com.example.TaskFlow.DTO.Response.DocumentFileResponse;
 import com.example.TaskFlow.Service.DocumentFileService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
@@ -15,7 +16,8 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping()
+@SecurityRequirement(name = "bearerAuth")
+@RequestMapping
 public class DocumentFileController {
 
     private final DocumentFileService documentFileService;

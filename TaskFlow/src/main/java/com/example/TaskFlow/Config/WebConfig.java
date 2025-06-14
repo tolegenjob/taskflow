@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.data.web.config.PageableHandlerMethodArgumentResolverCustomizer;
 
@@ -20,8 +19,7 @@ public class WebConfig {
         return resolver -> {
             resolver.setFallbackPageable(
                     PageRequest.of(defaultPage,
-                            defaultSize,
-                            Sort.by(Sort.Direction.DESC, "createdAt"))
+                            defaultSize)
             );
             resolver.setMaxPageSize(maxPageSize);
         };

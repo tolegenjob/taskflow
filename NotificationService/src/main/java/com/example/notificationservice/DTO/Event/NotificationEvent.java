@@ -1,7 +1,7 @@
 package com.example.notificationservice.DTO.Event;
 
 public record NotificationEvent(
-        Long taskId,
+        Long entityId,
         String title,
         String status
 ) {

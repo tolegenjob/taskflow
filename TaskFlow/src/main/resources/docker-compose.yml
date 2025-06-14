@@ -1,4 +1,22 @@
 services:
+  taskflow-elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:9.0.0
+    container_name: taskflow-elasticsearch
+    restart: always
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"
+    volumes:
+      - taskflow-es-data:/usr/share/elasticsearch/data
+
+  redis:
+    image: redis
+    container_name: taskflow-redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
 
   rabbitmq:
     image: rabbitmq:management
@@ -38,7 +56,7 @@ services:
   taskflow-postgres:
     image: postgres
     container_name: taskflow-postgres
-    restart: always
+    restart: unless-stopped
     environment:
       POSTGRES_USER: tqal
       POSTGRES_PASSWORD: Qwerty5656@
@@ -51,7 +69,7 @@ services:
   taskflow-mongoDB:
     image: mongo
     container_name: taskflow-mongoDB
-    restart: always
+    restart: unless-stopped
     environment:
       MONGO_INITDB_ROOT_USERNAME: tqal
       MONGO_INITDB_ROOT_PASSWORD: Qwerty5656@
@@ -64,3 +82,4 @@ services:
 volumes:
   taskflow-postgres-data:
   taskflow-mongo-data:
+  taskflow-es-data:

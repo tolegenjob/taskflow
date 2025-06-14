@@ -22,7 +22,7 @@ public class ArchivedProjectService {
 
     public void createArchivedProject(Map<String, Object> payload) {
         ArchivedProject archivedProject = new ArchivedProject();
-        archivedProject.setProjectId(((Number) payload.get("projectId")).longValue());
+        archivedProject.setProjectId(((Number) payload.get("id")).longValue());
         archivedProject.setName((String) payload.get("name"));
         archivedProject.setDescription((String) payload.get("description"));
         archivedProject.setStatus(ProjectStatus.valueOf((String) payload.get("status")));

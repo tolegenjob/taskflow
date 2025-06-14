@@ -1,9 +1,11 @@
 package com.example.TaskFlow.Util;
 
 import com.example.TaskFlow.Config.FileStorageProperties;
+import com.example.TaskFlow.Entity.User;
 import com.example.TaskFlow.Exception.DoesNotBelongToEntityException;
 import com.example.TaskFlow.Exception.EntityNotFoundException;
 import com.example.TaskFlow.Exception.FileNotValidException;
+import com.example.TaskFlow.Repository.UserRepository;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,6 +15,12 @@ public class EntityUtil {
         return repository.findById(id)
                 .orElseThrow(() ->
                         new EntityNotFoundException("%s with id %s not found".formatted(entityName, id)));
+    }
+
+    public static User findUserByEmailOrThrow(UserRepository userRepository, String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new EntityNotFoundException("User with email %s not found".formatted(email)));
     }
 
     public static void validateBelongsTo(

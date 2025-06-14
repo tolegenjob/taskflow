@@ -1,19 +1,19 @@
 package com.example.TaskFlow.Entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
+import com.example.TaskFlow.Enum.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.Set;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "users")
-public class User extends BaseEntity {
+public class User extends BaseEntity implements Serializable {
 
     @Column(nullable = false)
     private String firstName;
@@ -25,9 +25,17 @@ public class User extends BaseEntity {
     private String email;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    @Column(nullable = false)
+    private String password;
+
+    @Column(nullable = false)
     private Boolean active;
 
     @ManyToMany(mappedBy = "users")
+    @JsonIgnore
     private Set<Project> projects;
 
 }

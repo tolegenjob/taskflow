@@ -2,6 +2,7 @@ package com.example.TaskFlow.Controller;
 
 import com.example.TaskFlow.DTO.Response.EventResponse;
 import com.example.TaskFlow.Service.EventLogService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
+@SecurityRequirement(name = "bearerAuth")
 @RequestMapping("/events")
 public class EventLogController {
 

@@ -10,19 +10,23 @@ import com.example.TaskFlow.Enum.LogLevel;
 import com.example.TaskFlow.Enum.ProjectStatus;
 import com.example.TaskFlow.Message.Producer.EventLogProducer;
 import com.example.TaskFlow.Message.Producer.LogEntryEventProducer;
+import com.example.TaskFlow.Message.Producer.RedisMessageProducer;
 import com.example.TaskFlow.Repository.ProjectRepository;
 import com.example.TaskFlow.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
+import static com.example.TaskFlow.Enum.EventType.PROJECT_UPDATED;
 import static com.example.TaskFlow.Util.EntityUtil.findOrThrow;
-import static com.example.TaskFlow.Util.MessageUtil.sendEventLogToKafka;
-import static com.example.TaskFlow.Util.MessageUtil.sendLogEntryEventToKafka;
+import static com.example.TaskFlow.Util.MessageUtil.*;
 
 @Service
 @Slf4j
@@ -34,7 +38,9 @@ public class ProjectService {
     private final LogEntryEventProducer logEntryEventProducer;
     private final KafkaProperties kafkaProperties;
     private final EventLogProducer eventLogProducer;
+    private final RedisMessageProducer redisMessageProducer;
 
+    @CachePut(value = "projects", key = "#result.id")
     public Project createProject(ProjectCreateRequest projectCreateRequest) {
         Project project = new Project();
         project.setName(projectCreateRequest.name());
@@ -65,12 +71,14 @@ public class ProjectService {
         return projects;
     }
 
+    @Cacheable(value = "projects", key = "#id")
     public Project getProjectById(Long id) {
         Project project = findOrThrow(projectRepository, id, "Project");
         log.info("Got project with id: {} ", id);
         return project;
     }
 
+    @CachePut(value = "projects", key = "#result.id")
     public Project updateProjectById(Long id, ProjectUpdateRequest projectUpdateRequest) {
         Project project = findOrThrow(projectRepository, id, "Project");
         project.setName(projectUpdateRequest.name());
@@ -90,7 +98,7 @@ public class ProjectService {
         {
             eventType = EventType.PROJECT_ARCHIVED;
         } else {
-            eventType = EventType.PROJECT_UPDATED;
+            eventType = PROJECT_UPDATED;
         }
         sendEventLogToKafka(eventLogProducer,
                 kafkaProperties.topic().events(),
@@ -98,9 +106,15 @@ public class ProjectService {
                 project.getId(),
                 EntityType.PROJECT,
                 context);
+        sendNotificationEventToRedis(
+                redisMessageProducer,
+                saved.getId(),
+                saved.getName(),
+                "PROJECT_UPDATED");
         return saved;
     }
 
+    @CacheEvict(value = "projects", key = "#id")
     public void deleteProjectById(Long id) {
         Project project = findOrThrow(projectRepository, id, "Project");
         projectRepository.delete(project);
@@ -118,6 +132,11 @@ public class ProjectService {
                 project.getId(),
                 EntityType.PROJECT,
                 context);
+        sendNotificationEventToRedis(
+                redisMessageProducer,
+                project.getId(),
+                project.getName(),
+                "PROJECT DELETED");
     }
 
     private Map<String, Object> getProjectDetails(Project project) {

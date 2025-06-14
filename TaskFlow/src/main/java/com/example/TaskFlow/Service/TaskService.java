@@ -16,11 +16,15 @@ import com.example.TaskFlow.Repository.TaskRepository;
 import com.example.TaskFlow.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 import static com.example.TaskFlow.Util.EntityUtil.findOrThrow;
@@ -42,7 +46,7 @@ public class TaskService {
     private final KafkaProperties kafkaProperties;
     private final EventLogProducer eventLogProducer;
 
-
+    @CachePut(value = "tasks", key = "#result.id")
     public Task createTask(TaskCreateRequest taskCreateRequest) {
         Task task = new Task();
         setTaskProperties(task,
@@ -78,12 +82,14 @@ public class TaskService {
         return tasks;
     }
 
+    @Cacheable(value = "tasks", key = "#id")
     public Task getTaskById(Long id) {
         Task task = findOrThrow(taskRepository, id, "Task");
         log.info("Got task with id: {} ", id);
         return task;
     }
 
+    @CachePut(value = "tasks", key = "#result.id")
     public Task updateTaskById(Long id, TaskUpdateRequest taskUpdateRequest) {
         Task task = findOrThrow(taskRepository, id, "Task");
         setTaskProperties(task,
@@ -112,6 +118,7 @@ public class TaskService {
         return saved;
     }
 
+    @CacheEvict(value = "tasks", key = "#id")
     public void deleteTaskById(Long id) {
         Task task = findOrThrow(taskRepository, id, "Task");
         taskRepository.delete(task);
@@ -196,7 +203,7 @@ public class TaskService {
                 "description", task.getDescription(),
                 "status", task.getStatus(),
                 "priority", task.getPriority(),
-                "deadline", task.getDeadline(),
+                "deadline", task.getDeadline().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")),
                 "assignedUserId", task.getAssignedUser().getId(),
                 "projectId", task.getProject().getId()
         );

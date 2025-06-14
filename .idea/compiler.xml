@@ -10,5 +10,24 @@
         <module name="TaskFlow.main" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="com.example.EventConsumerService" target="21" />
+      <module name="com.example.EventConsumerService.main" target="21" />
+      <module name="com.example.EventConsumerService.test" target="21" />
+      <module name="TaskFlow.test" target="21" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="EventConsumerService" options="-parameters" />
+      <module name="EventConsumerService.main" options="-parameters" />
+      <module name="EventConsumerService.test" options="-parameters" />
+      <module name="NotificationService" options="-parameters" />
+      <module name="NotificationService.main" options="-parameters" />
+      <module name="NotificationService.test" options="-parameters" />
+      <module name="TaskFlow" options="-parameters" />
+      <module name="TaskFlow.main" options="-parameters" />
+      <module name="com.example.TaskFlow.test" options="-parameters" />
+    </option>
   </component>
 </project>

@@ -1,9 +1,7 @@
 package com.example.TaskFlow.Service;
 
-import com.example.TaskFlow.Config.KafkaProperties;
 import com.example.TaskFlow.DTO.Event.Event;
 import com.example.TaskFlow.Entity.EventLog;
-import com.example.TaskFlow.Message.Producer.EventLogProducer;
 import com.example.TaskFlow.Repository.EventLogRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +11,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import static com.example.TaskFlow.Util.EntityUtil.findOrThrow;
-import static com.example.TaskFlow.Util.MessageUtil.sendDlqToKafka;
 
 @Service
 @Slf4j
@@ -21,8 +18,6 @@ import static com.example.TaskFlow.Util.MessageUtil.sendDlqToKafka;
 public class EventLogService {
 
     private final EventLogRepository eventLogRepository;
-    private final KafkaProperties kafkaProperties;
-    private final EventLogProducer eventLogProducer;
 
     public Page<EventLog> getAllEventLogs(Pageable pageable) {
         log.info("Got all EventLogs");
@@ -36,17 +31,12 @@ public class EventLogService {
     }
 
     public void createEventLog(Event event) {
-        try {
-            EventLog eventLog = new EventLog();
-            eventLog.setEventType(event.eventType());
-            eventLog.setEntityId(event.entityId());
-            eventLog.setEntityType(event.entityType());
-            eventLog.setPayload(event.payload());
-            EventLog saved = eventLogRepository.save(eventLog);
-            log.info("Saved EventLog with id: {}", saved.getId());
-        } catch (Exception e) {
-            sendDlqToKafka(eventLogProducer, kafkaProperties.topic().dlq(), event, e.getMessage());
-            throw new RuntimeException(e);
-        }
+        EventLog eventLog = new EventLog();
+        eventLog.setEventType(event.eventType());
+        eventLog.setEntityId(event.entityId());
+        eventLog.setEntityType(event.entityType());
+        eventLog.setPayload(event.payload());
+        EventLog saved = eventLogRepository.save(eventLog);
+        log.info("Saved EventLog with id: {}", saved.getId());
     }
 }

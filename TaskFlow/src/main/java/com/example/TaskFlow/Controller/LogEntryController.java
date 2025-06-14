@@ -3,6 +3,7 @@ package com.example.TaskFlow.Controller;
 import com.example.TaskFlow.DTO.Response.LogEntryResponse;
 import com.example.TaskFlow.Enum.LogLevel;
 import com.example.TaskFlow.Service.LogEntryService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
+@SecurityRequirement(name = "bearerAuth")
 @RequestMapping("/logs")
 public class LogEntryController {
 

@@ -2,6 +2,7 @@ package com.example.TaskFlow.Controller;
 
 import com.example.TaskFlow.DTO.Response.TaskHistoryResponse;
 import com.example.TaskFlow.Service.TaskHistoryService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@SecurityRequirement(name = "bearerAuth")
 @RequestMapping("/tasks/{taskId}/history")
 public class TaskHistoryController {
 

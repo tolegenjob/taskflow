@@ -30,7 +30,7 @@ public class GlobalExceptionHandler {
     private final ServerProperties serverProperties;
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleEntityNotFoundException(Throwable e,
+    public ResponseEntity<ErrorResponse> handleEntityNotFoundException(EntityNotFoundException e,
                                                                        ServletWebRequest request) {
         log.error("Entity not found: {}", e.getMessage());
         ErrorResponse errorResponse = ErrorResponse.builder()
@@ -53,7 +53,7 @@ public class GlobalExceptionHandler {
             MethodArgumentNotValidException.class,
             HttpMessageNotReadableException.class
     })
-    public ResponseEntity<ErrorResponse> handleBadRequestException(Throwable e,
+    public ResponseEntity<ErrorResponse> handleBadRequestException(Exception e,
                                                                    ServletWebRequest request) {
 
         String className = e.getClass().getSimpleName();
@@ -75,7 +75,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleAll(Throwable e,
+    public ResponseEntity<ErrorResponse> handleAll(Exception e,
                                                    ServletWebRequest request) {
 
         String className = e.getClass().getSimpleName();
@@ -96,7 +96,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 
-    private Map<String, Object> getErrorContext(Throwable ex,
+    private Map<String, Object> getErrorContext(Exception ex,
                                                 ServletWebRequest request,
                                                 ErrorResponse errorResponse) {
         return Map.of(

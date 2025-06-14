@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SqlDialectMappings">
+    <file url="file://$PROJECT_DIR$/EventConsumerService/src/main/resources/db/migration/V1__create_project_archive_table.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/NotificationService/src/main/resources/db/changelog/add_table_notifications.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/TaskFlow/src/main/resources/db/migration/V1__creation_tables_users_projects_comments_tasks.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/TaskFlow/src/main/resources/db/migration/V2__insert_50_rows.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/TaskFlow/src/main/resources/db/migration/V3__add_role_password_columns_for_users.sql" dialect="GenericSQL" />
+  </component>
+</project>

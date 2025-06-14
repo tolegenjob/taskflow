@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
     private final ServerProperties serverProperties;
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleEntityNotFoundException(Throwable e,
+    public ResponseEntity<ErrorResponse> handleEntityNotFoundException(EntityNotFoundException e,
                                                                        ServletWebRequest request) {
         log.error("Entity not found: {}", e.getMessage());
         ErrorResponse errorResponse = ErrorResponse.builder()
@@ -51,7 +51,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(DoesNotBelongToEntityException.class)
-    public ResponseEntity<ErrorResponse> handleDoesNotBelongToEntityException(Throwable e,
+    public ResponseEntity<ErrorResponse> handleDoesNotBelongToEntityException(DoesNotBelongToEntityException e,
                                                                               ServletWebRequest request) {
         log.error("Entity doesn't belong to requested one: {}", e.getMessage());
         ErrorResponse errorResponse = ErrorResponse.builder()
@@ -73,9 +73,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({
             MethodArgumentNotValidException.class,
             HttpMessageNotReadableException.class,
-            FileNotValidException.class
+            FileNotValidException.class,
+            TokenExpiredException.class
     })
-    public ResponseEntity<ErrorResponse> handleBadRequestException(Throwable e,
+    public ResponseEntity<ErrorResponse> handleBadRequestException(Exception e,
                                                                    ServletWebRequest request) {
 
         String className = e.getClass().getSimpleName();
@@ -97,7 +98,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
-    public ResponseEntity<ErrorResponse> handleMaxUploadSizeExceededException(Throwable e,
+    public ResponseEntity<ErrorResponse> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException e,
                                                                               ServletWebRequest request) {
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .status(HttpStatus.valueOf(413))
@@ -120,7 +121,7 @@ public class GlobalExceptionHandler {
             Exception.class,
             FileStorageException.class
     })
-    public ResponseEntity<ErrorResponse> handleAll(Throwable e,
+    public ResponseEntity<ErrorResponse> handleAll(Exception e,
                                                    ServletWebRequest request) {
 
         String className = e.getClass().getSimpleName();
@@ -141,7 +142,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 
-    private Map<String, Object> getErrorContext(Throwable ex,
+    private Map<String, Object> getErrorContext(Exception ex,
                                                 ServletWebRequest request,
                                                 ErrorResponse errorResponse) {
         return Map.of(
